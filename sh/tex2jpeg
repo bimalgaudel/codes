@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+# pass a LaTeX argument to get an image
+
+image_format=$(basename $0)
+image_format=${image_format#tex2}
+pdf2image () { pdftoppm -q -singlefile -r 600 $1 $2 -$image_format; }
+
+word_to_write=$1
+file_to_write=$2
+tex_template_1='\documentclass{standalone}
+                \usepackage{mathptmx}
+                \usepackage[arrows=pgf,version=4]{mhchem}
+                \begin{document}
+                \textbf{'
+tex_template_2='}\end{document}'
+pdflatex $tex_template_1$word_to_write$tex_template_2 >/dev/null
+pdf2image standalone.pdf $file_to_write
+rm standalone*

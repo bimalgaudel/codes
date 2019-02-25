@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# create a file with execute permission
+# and a shebang declaration in the header
+# Bimal Gaudel 2018-11-17 20:40
+
+if [[ $# == 0 ]]; then
+    echo 'Usage: chfile <file-name> <bash|python3|...>'
+    echo
+    exit 0
+elif [[ -f $1 ]]; then
+    echo "File exists." && exit 1
+elif [[ $# == 1 ]]; then
+    echo 'No shebang given. Using default: #!/usr/bin/env bash'
+    SHEBANG="bash"
+fi
+
+FILE=$1
+SHEBANG="${SHEBANG:-$2}"
+echo '#!/usr/bin/env' "$SHEBANG" > $FILE
+chmod +x $FILE

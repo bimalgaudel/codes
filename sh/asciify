@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+#
+# Remove non-ascii characters from a plain text file
+
+print_usage() {
+    echo
+    echo 'Usage:'
+    echo 'asciify <old_file> <clean_file>'
+    echo
+}
+
+clean_up() {
+    tr -cd '\11\12\15\40-\176' < $1 > $2 clean-file
+}
+
+if [[ $# == 0 ]] || [[ $1 == '-h' ]] || [[ $1 == '--help' ]]; then
+    print_usage
+else
+    clean_up $1 $2
+fi
