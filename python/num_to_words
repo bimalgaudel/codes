@@ -1,0 +1,77 @@
+#!/bin/env python3
+# coding: utf-8
+#
+# num_to_words
+#
+# this script converts numbers into words
+# negative integers, zero, as well as positive integers are supported
+# example:
+# >
+# > num_to_words 8934
+# > eight thousand, nine hundred thrity-four
+# > num_to_words 101 546 345
+# > one hundred one
+#   five hundred forty-six
+#   three hundred forty-five
+# >
+# the numbers in the order of trillion are supported for now
+# this can easily be extended
+
+onies = tuple(range(0, 9+1)) # notice 'zero' is included
+elevenies = tuple(range(10, 20+1)) # includes 10 and 20
+tenies = tuple(range(30,100+1, 10)) # includes 100
+thouies = tuple(10**x for x in range(3,12+1,3)) # from thousand upto trillion
+
+onies_words = ('', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine')
+elevenies_words = ('ten', 'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen',
+                  'seventeen', 'eighteen', 'nineteen', 'twenty')
+tenies_words = ('thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety', 'hundred')
+thouies_words = ('thousand', 'million', 'billion', 'trillion')
+
+# mapping numbers to words
+num_to_word = {}
+for k,v in zip(thouies + tenies + elevenies + onies,
+        thouies_words + tenies_words + elevenies_words + onies_words):
+    num_to_word[k] = v
+
+def in_word(num):
+    """
+    Takes a number and converts it to word
+    
+    The number has to be an integer and greater than zero.
+    """
+    if num <= 20:
+        return num_to_word[num]
+    elif num < 100:
+        dividend = num//10*10
+        remainder = num % 10
+        raw = num_to_word[dividend] + '-' + num_to_word[remainder]
+        return raw.strip('-')
+    elif num < 1000:
+        dividend = num//100
+        remainder = num % 100
+        raw = num_to_word[dividend] + ' hundred ' + in_word(remainder)
+        return raw.strip(' ')
+    # else
+    for order in thouies[::-1]: # dividing from higher order numbers down
+        if not num/order < 1:
+            raw = in_word(num//order) + ' ' + num_to_word[order] + ', ' + in_word(num%order)
+            return raw.strip(', ')
+
+def num_to_word_converter(string):
+    try:
+        num = int(string)
+    except ValueError:
+        return("Enter a valid integer. eg. -643, 0, 70903")
+    if num == 0:
+        return "zero"
+    elif num < 0:
+        return "minus " + in_word(abs(num))
+    else:
+        return in_word(num)
+
+
+if __name__ == '__main__':
+    import sys
+    for arg in sys.argv[1:]:
+        print('\n'.join([num_to_word_converter(arg)]))
