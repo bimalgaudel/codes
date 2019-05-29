@@ -1,0 +1,61 @@
+#!/usr/bin/env python3
+
+import sys
+from itertools import permutations
+
+def sym_perms(ints, notation='phys'): 
+    '''
+    TODO: write docstrings
+    '''
+     
+    if notation   == 'phys':
+        bk_off, el_off = 2, 1
+    elif notation == 'chem':
+        bk_off, el_off = 1, 2
+     
+    bra = 0
+    ket = bra+bk_off
+
+    e1_bra = ints[bra]
+    e1_ket = ints[ket]
+    # e2_bra = ints[bra+el_off]
+    # e2_ket = ints[ket+el_off]
+
+    all_perms = permutations(ints) 
+    s = [] 
+    to_print = []
+    for p in all_perms: 
+        if (e1_bra, e1_ket) in ((p[0], p[0+bk_off]),
+                                (p[0+bk_off], p[0]),
+                                (p[el_off], p[el_off+bk_off]),
+                                (p[el_off+bk_off], p[el_off])):
+            s.append(p)
+    s = list(set(s))
+    s.sort()
+    return(s)
+
+def pretty_ints(a, b, c, d, notation='phys'):
+    intg = f'{a}{b}|{c}{d}'
+    if notation == 'phys':
+        return(f'<{intg}>')
+    elif notation == 'chem':
+        return(f'({intg})')
+
+def usage():
+    print("\nUsage:\n\nsym_perms 'abcd' ['chem'|'phys']\n")
+
+if __name__ == '__main__':
+    args = sys.argv[1:]
+    notation = 'phys'
+    try:
+        assert(args), 'No args!'
+        assert(len(args[0]) == 4), 'We only handle 4 index integrals'
+        if args[1:]:
+            assert(args[1:] == [args[1]]), 'Too many arguments!'
+            assert(args[1] in ('phys', '--phys', '-phys',
+                                'chem', '--chem', '-chem')), 'Unsupported notation'
+            notation = args[1].strip('-')
+        ints = sym_perms(args[0], notation)
+        print(' '.join([pretty_ints(*i, notation) for i in ints]))
+    except AssertionError:
+        usage()
