@@ -34,11 +34,11 @@ def sym_perms(ints, notation='phys'):
     s.sort()
     return(s)
 
-def pretty_ints(a, b, c, d, notation='phys'):
+def pretty_ints(a, b, c, d, print_op='phys'):
     intg = f'{a}{b}|{c}{d}'
-    if notation == 'phys':
+    if print_op == 'phys':
         return(f'<{intg}>')
-    elif notation == 'chem':
+    elif print_op == 'chem':
         return(f'({intg})')
 
 def usage():
@@ -47,6 +47,7 @@ def usage():
 if __name__ == '__main__':
     args = sys.argv[1:]
     notation = 'phys'
+    print_op = 'phys' # phys, chem
     try:
         assert(args), 'No args!'
         assert(len(args[0]) == 4), 'We only handle 4 index integrals'
@@ -55,7 +56,8 @@ if __name__ == '__main__':
             assert(args[1] in ('phys', '--phys', '-phys',
                                 'chem', '--chem', '-chem')), 'Unsupported notation'
             notation = args[1].strip('-')
+            print_op = args[1].strip('-')
         ints = sym_perms(args[0], notation)
-        print(' '.join([pretty_ints(*i, notation) for i in ints]))
+        print(' '.join([pretty_ints(*i, print_op) for i in ints]))
     except AssertionError:
         usage()
