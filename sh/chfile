@@ -18,3 +18,5 @@ FILE=$1
 SHEBANG="${SHEBANG:-$2}"
 echo '#!/usr/bin/env' "$SHEBANG" > $FILE
 chmod +x $FILE
+# open file in the editor
+[[ -n ${EDITOR} ]] && ${EDITOR} ${FILE}
